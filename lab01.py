@@ -45,7 +45,7 @@ def perceptron_training(X,y):
     weights = np.ones(X.shape[1]) #initalizing all weights with 1 
     lr = 0.1 
 
-    for epoch in range(2):
+    for epoch in range(20):
         errors = 0 
         for i in range(X.shape[0]):
             weighted_sum = np.dot(weights,X[i])
@@ -60,3 +60,40 @@ def perceptron_training(X,y):
 final_weights = perceptron_training(X_train,y_train)
 print(final_weights)
 
+#plotting decision boundary 
+def plot_decision_boundary(weights,X,y):
+    bias = weights[0]
+    w1 = weights[1]
+    w2 = weights[2]
+
+    x_input = np.linspace(X[:,0].min(),X[:,1].max(),100)
+
+    y_input = -(w1 * x_input + bias) /w2
+
+    plt.figure(figsize=(8,5))
+    plt.plot(x_input,y_input,color = 'red' , linewidth = 2 , label = 'Decision Boundary')
+    plt.scatter(X[:,0],X[:,1],c=y,cmap='winter')
+    plt.title("Perceptron Decision boundary (Train Data)")
+    plt.xlabel("X 1")
+    plt.ylabel("X 2")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+plot_decision_boundary(final_weights,X_train,y_train)
+
+# perceptron predict 
+def perceptron_predict(X,weights):
+    X = np.insert(X,0,1,axis =1)
+    predictions = []
+    for x in X:
+        z = np.dot(weights,x)
+        y_hat = step(z)
+        predictions.append(y_hat)
+    return np.array(predictions)
+
+y_pred = perceptron_predict(X_test,final_weights)
+
+#Accuracy score
+from sklearn.metrics import accuracy_score
+print("Test Accuracy :" , accuracy_score(y_test,y_pred))
